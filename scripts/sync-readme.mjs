@@ -7,7 +7,15 @@ import { join } from "node:path";
 import { execSync } from "node:child_process";
 import os from "node:os";
 
-const triggerPath = (process.argv[2] || "").replace(/\\/g, "/");
+// argv[2] lets this be invoked directly for testing; normally reads the
+// PostToolUse hook's stdin JSON ({ tool_input: { file_path }, tool_response: { filePath } }).
+let rawPath = process.argv[2];
+if (!rawPath) {
+  const stdin = readFileSync(0, "utf8");
+  const hook = JSON.parse(stdin || "{}");
+  rawPath = hook?.tool_response?.filePath || hook?.tool_input?.file_path || "";
+}
+const triggerPath = rawPath.replace(/\\/g, "/");
 if (!/\.claude\/skills\/.*SKILL\.md$/i.test(triggerPath)) process.exit(0);
 
 const HOME = os.homedir();
