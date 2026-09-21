@@ -38,7 +38,7 @@ function frontmatter(skillMdPath) {
   const m = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!m) return "";
   const body = m[1];
-  const descLine = body.match(/^description:\s*(\|[-+]?|>[-+]?)?\s*(.*)$/m);
+  const descLine = body.match(/^description:[ \t]*(\|[-+]?|>[-+]?)?[ \t]*(.*)$/m);
   if (!descLine) return "";
   let desc;
   if (descLine[1]) {
