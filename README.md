@@ -37,3 +37,22 @@ Custom [Claude Code](https://claude.com/claude-code) skills, agents, and command
 ## Usage
 
 Drop any of these into `~/.claude/skills/`, `~/.claude/agents/`, or `~/.claude/commands/` (or a project's `.claude/` equivalent) to enable them in Claude Code.
+
+## External plugins (not mirrored here)
+
+Installed via Claude Code's plugin marketplaces rather than authored locally, so they aren't copied into this repo — install them directly instead:
+
+| Plugin | Source |
+|---|---|
+| `frontend-design` | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) |
+| `superdesign` | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) |
+| `feature-dev` | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) |
+| `security-guidance` | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) |
+| `superpowers` | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) |
+| `semgrep` | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) |
+| `engineering-skills` | [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) |
+| `engineering-advanced-skills` | [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) |
+| `ui-ux-pro-max` | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) |
+| `brag` | [latent-spaces/brag](https://github.com/latent-spaces/brag) |
+| `ponytail` | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) |
+| `headroom` | [headroomlabs-ai/headroom](https://github.com/headroomlabs-ai/headroom) |
