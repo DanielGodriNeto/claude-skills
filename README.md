@@ -4,21 +4,25 @@ Custom [Claude Code](https://claude.com/claude-code) skills, agents, and command
 
 ## skills/
 
+Auto-synced from `~/.claude/skills/` whenever a skill is added or edited — do not hand-edit the table below, it gets overwritten.
+
+<!-- SKILLS_TABLE_START -->
 | Skill | Purpose |
 |---|---|
-| `frontend-design` | Distinctive, non-generic frontend UI/visual design guidance |
-| `graphify` | Turn any input (code, docs, papers, images, video) into a persistent, queryable knowledge graph |
-| `humanizer` | Rewrite AI-sounding text so it reads naturally |
-| `hyperframes` | Entry point for creating/editing/rendering HyperFrames videos and motion graphics |
-| `hyperframes-animation` | Motion rules, scene blueprints, and runtime adapters (GSAP, Lottie, Three.js, etc.) |
-| `hyperframes-audio` | Audio mixing for HyperFrames compositions (fades, ducking, effects, automation) |
-| `hyperframes-cli` | HyperFrames CLI workflow: init, render, preview, publish, etc. |
-| `hyperframes-core` | The HyperFrames composition contract (timing, tracks, deterministic render rules) |
-| `hyperframes-creative` | Non-animation creative direction: palettes, typography, narration, beat planning |
-| `hyperframes-keyframes` | Seek-safe camera moves, zooms, reframes, 2D/3D keyframe techniques |
-| `hyperframes-registry` | Discover/install/wire pre-built HyperFrames blocks and components |
-| `media-use` | Sourcing and generating media (BGM, SFX, voice, images, LUTs) for HyperFrames projects |
-| `superdesign` | Design/redesign frontend UI on the Superdesign canvas |
+| `frontend-design` | Guidance for distinctive, intentional visual design when building new UI or reshaping an existing one. Helps with aesthetic direction, typography, and making... |
+| `graphify` | Use for any question about a codebase, its architecture, file relationships, or project content — especially when graphify-out/ exists, where the question sh... |
+| `humanizer` | Use when editing or reviewing prose for inflated claims, sales language, vague sources, repetitive structure, stock AI words, passive voice, filler, or chatb... |
+| `hyperframes` | video, animation, or motion graphic, including a promo, explainer, captioned clip, title card, overlay, slideshow or interactive deck, Remotion port, or any ... |
+| `hyperframes-animation` | All animation knowledge for HyperFrames — atomic motion rules, multi-phase scene blueprints, scene transitions, broader motion-design techniques, AND the sev... |
+| `hyperframes-audio` | fade-in/fade-out, crossfade, track gain or volume, volume automation, ducking, a music bed that fights a voiceover (voiceover carve), effects on a track (EQ,... |
+| `hyperframes-cli` | compare, grade-compare, preview, play, present, beats, keyframes, single or batch render, publish, cloud, cloudrun, feedback, lambda, doctor, browser, info, ... |
+| `hyperframes-core` | The HyperFrames composition contract — build one renderable project. Use for composition structure, the `data-*` timing attributes, `class="clip"`, tracks, s... |
+| `hyperframes-creative` | Non-animation creative direction for HyperFrames videos. Use for design spec (frame.md / design.md) handling, palettes, typography, narration, beat planning,... |
+| `hyperframes-keyframes` | Ken Burns treatment, camera move, visual match/whip handoff, or other seek-safe 2D/3D keyframes; also for GSAP, CSS keyframes, Anime.js, WAAPI, FLIP, paths, ... |
+| `hyperframes-registry` | Search, install, and wire registry blocks and components into HyperFrames compositions. Use BEFORE hand-building any named visual — whenever a brief, a user,... |
+| `media-use` | Agent Media OS, the single skill for every media need in a HyperFrames project. Resolve BGM, SFX, image, icon, brand logo, voice, color grade, or LUT into a ... |
+| `superdesign` | Design or redesign frontend UI on the Superdesign canvas. Use whenever the user wants to design a page, feature, flow, or a brand-new product with no code ye... |
+<!-- SKILLS_TABLE_END -->
 
 ## agents/
 
