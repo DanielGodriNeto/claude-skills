@@ -31,6 +31,8 @@ Auto-synced from `~/.claude/skills/` whenever a skill is added or edited — do 
 | `code-architect` | Designs feature architectures from existing codebase patterns |
 | `code-explorer` | Traces execution paths and maps architecture for a feature area |
 | `code-reviewer` | Reviews code for bugs, security issues, and convention adherence |
+| `explorer` | Cheap (haiku) file discovery, symbol search, and repo-structure lookups |
+| `implementer` | Sonnet-tier agent for running tests, reading failures, and applying fixes |
 
 ## commands/
 
