@@ -38,7 +38,8 @@ if (existsSync(DEST)) {
   }
 }
 for (const name of srcDirs) {
-  cpSync(join(SRC, name), join(DEST, name), { recursive: true, force: true });
+  // skills installed with `npx skills add` are symlinks into ~/.agents/skills; copy their contents, not the link
+  cpSync(join(SRC, name), join(DEST, name), { recursive: true, force: true, dereference: true });
 }
 
 function frontmatter(skillMdPath) {
