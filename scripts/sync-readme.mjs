@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Fires from a Claude Code PostToolUse(Write) hook whenever a SKILL.md is written.
 // Mirrors ~/.claude/skills/ into this repo's skills/, regenerates the README table,
-// and commits+pushes if anything changed.
+// and commits locally if anything changed (push is manual).
 import { readdirSync, statSync, readFileSync, writeFileSync, cpSync, rmSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { execSync } from "node:child_process";
@@ -88,6 +88,31 @@ const sh = (cmd) => execSync(cmd, { cwd: REPO, stdio: "pipe" }).toString();
 
 if (sh("git status --porcelain").trim() === "") process.exit(0);
 
+// Safety gate: never publish secrets or personal data. Aborts before commit/push.
+const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const LEAK = new RegExp(
+  [
+    "sk-ant-[A-Za-z0-9_-]{10,}", "ghp_[A-Za-z0-9]{20,}", "gho_[A-Za-z0-9]{20,}", "github_pat_[A-Za-z0-9_]{20,}",
+    "AKIA[0-9A-Z]{16}", "AIza[0-9A-Za-z_-]{30,}", "xox[bp]-[0-9A-Za-z-]+", "-----BEGIN [A-Z ]*PRIVATE KEY-----",
+    esc(HOME), esc(HOME.replace(/\\/g, "/")), // personal home path, computed at runtime
+  ].join("|")
+);
+function findLeaks(dir, hits = []) {
+  for (const name of readdirSync(dir)) {
+    if (name === ".git") continue;
+    const p = join(dir, name);
+    const st = statSync(p);
+    if (st.isDirectory()) findLeaks(p, hits);
+    else if (st.size < 2_000_000 && LEAK.test(readFileSync(p, "utf8"))) hits.push(p);
+  }
+  return hits;
+}
+const leaks = findLeaks(REPO);
+if (leaks.length) {
+  writeFileSync(join(HOME, ".claude", "sync-blocked.log"), `${new Date().toISOString()} sync blocked, possible secret/personal data in:\n${leaks.join("\n")}\n`);
+  process.exit(1);
+}
+
 sh("git add -A");
 sh(`git commit -q -m "Sync skills from ~/.claude/skills"`);
-sh("git push -q");
+// Publishing is manual on purpose: review, then run `git push` yourself.
