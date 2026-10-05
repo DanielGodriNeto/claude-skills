@@ -1,0 +1,112 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File <HOME>/.claude/hooks/skill-install-gate.ps1",
+            "timeout": 20,
+            "statusMessage": "Checking skill install gate..."
+          }
+        ]
+      },
+      {
+        "matcher": "PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File <HOME>/.claude/hooks/skill-install-gate.ps1",
+            "timeout": 20,
+            "statusMessage": "Checking skill install gate..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/compact-nudge.mjs",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/build-prompt-nudge.mjs",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/plugin-hook.mjs prompt",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node <HOME>/.claude/hooks/plugin-hook.mjs session",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "ask": [
+      "Bash(git push *--force*)",
+      "Bash(git push * -f)",
+      "Bash(git push -f*)",
+      "Bash(git reset --hard *)",
+      "Bash(git clean *)",
+      "Bash(gh repo create *)",
+      "Bash(git checkout -b *)",
+      "Bash(git checkout -B *)",
+      "Bash(git switch -c *)",
+      "Bash(git switch -C *)",
+      "Bash(git switch --create *)",
+      "PowerShell(git push *--force*)",
+      "PowerShell(git push * -f)",
+      "PowerShell(git push -f*)",
+      "PowerShell(git reset --hard *)",
+      "PowerShell(git clean *)",
+      "PowerShell(gh repo create *)",
+      "PowerShell(git checkout -b *)",
+      "PowerShell(git checkout -B *)",
+      "PowerShell(git switch -c *)",
+      "PowerShell(git switch -C *)",
+      "PowerShell(git switch --create *)",
+      "Edit(//**/.env*)",
+      "Edit(//**/.github/**)",
+      "Edit(//**/package-lock.json)",
+      "Edit(//**/pnpm-lock.yaml)",
+      "Edit(//**/yarn.lock)",
+      "Edit(//**/.eslintrc*)",
+      "Edit(//**/eslint.config.*)",
+      "Edit(//**/.prettierrc*)",
+      "Edit(//**/prettier.config.*)",
+      "Edit(//**/biome.json*)",
+      "Edit(//**/.stylelintrc*)",
+      "Edit(//**/ruff.toml)",
+      "Edit(//**/.ruff.toml)",
+      "Edit(//**/.flake8)",
+      "Edit(//**/.pylintrc)",
+      "Edit(//**/rustfmt.toml)",
+      "Edit(//**/.clang-format)",
+      "Edit(//**/.golangci.*)",
+      "Edit(//**/.editorconfig)"
+    ]
+  }
+}

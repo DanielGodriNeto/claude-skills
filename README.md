@@ -1,73 +1,56 @@
 # claude-skills
 
-Custom [Claude Code](https://claude.com/claude-code) skills, agents, and commands I use day to day, mirrored from `~/.claude/`.
+A small, opinionated Claude Code setup focused on two things: **spending fewer tokens** and **getting better results per task**. It is the configuration I actually use, with personal paths removed so you can adapt it.
 
-## skills/
+The core idea: do not run the same heavy process on every task. A single writer plus an executable check is the default; the full plan, critique and review cycle is kept for risky work.
 
-Auto-synced from `~/.claude/skills/` whenever a skill is added or edited — do not hand-edit the table below, it gets overwritten.
+## What is inside
+
+| Folder | Content |
+|---|---|
+| `skills/` | Four skills I wrote (table below) |
+| `agents/` | Six subagents with fixed model and effort: `explorer`, `researcher`, `implementer`, `planner`, `critic`, `reviewer`. They answer in a short fixed template to save tokens |
+| `hooks/` | `build-prompt-nudge.mjs` (route reminder on build/improve prompts), `compact-nudge.mjs` (suggests `/compact` after many tool calls), `plugin-hook.mjs` (turns on-demand plugins on when you ask), `skill-install-gate.ps1` (blocks installing skills or plugins until they were scanned) |
+| `scripts/` | `context-audit.mjs` (estimates the always-loaded token cost), `config-audit.mjs` (offline audit of your `.claude` folder, 0 tokens, caches a clean result), `plugin-toggle.mjs`, `sync-readme.mjs` (maintenance script for this repo) |
+| `examples/` | `CLAUDE.global.example.md` (routes R0-R4, risk list, git policy) and `settings.example.json` |
 
 <!-- SKILLS_TABLE_START -->
 | Skill | Purpose |
 |---|---|
-| `audio-design` | Implement game audio practice — bus/mixer architecture and gain in decibels, ducking (sidechain), adaptive/dynamic music via layering and re-sequencing, SFX ... |
-| `diagnose-crash` | Diagnose why a program crashed on this machine, from a systemd-coredump core dump. Use when a process has segfaulted, aborted, or otherwise dumped core, when... |
-| `find-skills` | Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or express ... |
-| `frontend-design` | Guidance for distinctive, intentional visual design when building new UI or reshaping an existing one. Helps with aesthetic direction, typography, and making... |
-| `game-ai` | Design NPC and enemy decision-making with finite state machines, behavior trees, steering behaviors, and A* pathfinding — engine-neutral algorithms that pair... |
-| `game-developer` | Use when building game systems, implementing Unity/Unreal Engine features, or optimizing game performance. Invoke to implement ECS architecture, configure ph... |
-| `game-feel` | Add "juice" and game feel that makes actions satisfying — screen shake, hit-stop/freeze frames, tweened/eased motion, squash & stretch, knockback, and layere... |
-| `game-ui-ux` | Design and build game UI/UX — HUDs, menus, and overlays — that survive every screen: anchor- based responsive layout, resolution/aspect scaling and safe area... |
-| `graphify` | Use for any question about a codebase, its architecture, file relationships, or project content — especially when graphify-out/ exists, where the question sh... |
-| `humanizer` | Rewrite AI-sounding text so it reads naturally without changing what it says. Use when editing or reviewing prose for inflated claims, sales language, vague ... |
-| `hyperframes` | Mandatory entry point: read this first for any request to make, create, edit, animate, or render a video, animation, or motion graphic, including a promo, ex... |
-| `hyperframes-animation` | All animation knowledge for HyperFrames — atomic motion rules, multi-phase scene blueprints, scene transitions, broader motion-design techniques, AND the sev... |
-| `hyperframes-audio` | Use when audio already placed in a HyperFrames composition needs to be mixed: fade-in/fade-out, crossfade, track gain or volume, volume automation, ducking, ... |
-| `hyperframes-cli` | Use the HyperFrames CLI development loop: init, add, catalog, capture, lint, check, snapshot, compare, grade-compare, preview, play, present, beats, keyframe... |
-| `hyperframes-core` | The HyperFrames composition contract — build one renderable project. Use for composition structure, the `data-*` timing attributes, `class="clip"`, tracks, s... |
-| `hyperframes-creative` | Non-animation creative direction for HyperFrames videos. Use for design spec (frame.md / design.md) handling, palettes, typography, narration, beat planning,... |
-| `hyperframes-keyframes` | Use when a HyperFrames composition needs a punch-in, punch-out, zoom, reframe, Ken Burns treatment, camera move, visual match/whip handoff, or other seek-saf... |
-| `hyperframes-registry` | Search, install, and wire registry blocks and components into HyperFrames compositions. Use BEFORE hand-building any named visual — whenever a brief, a user,... |
-| `level-design` | Design and build playable levels — the blockout/whitebox-to-playable workflow, player metrics and grid layout, pacing and flow (tension/rest curve), gating a... |
-| `media-use` | Agent Media OS, the single skill for every media need in a HyperFrames project. Resolve BGM, SFX, image, icon, brand logo, voice, color grade, or LUT into a ... |
-| `omarchy` | REQUIRED for end-user customization of Linux desktop, window manager, or system config. Use when editing ~/.config/hypr/, ~/.config/omarchy/, ~/.config/alacr... |
-| `superdesign` | Design or redesign frontend UI on the Superdesign canvas. Use whenever the user wants to design a page, feature, flow, or a brand-new product with no code ye... |
+| `big-task-workflow` | Routes R0-R4: effort scaled by task type and risk, from a direct fix to a full plan/critic/review cycle |
+| `feature-assessment` | Honest feasibility and risk verdict with percentages before building something non-trivial |
+| `repo-howto` | Find and evaluate GitHub repositories that solve a problem, with a token check first |
+| `project-map` | Turn a project into a navigable map (graphify and an Obsidian vault) with a public-safe variant |
 <!-- SKILLS_TABLE_END -->
 
-## agents/
+Skills written by other people are **not copied here**. They are listed with links in [THIRD_PARTY.md](THIRD_PARTY.md).
 
-| Agent | Purpose |
-|---|---|
-| `code-architect` | Designs feature architectures from existing codebase patterns |
-| `code-explorer` | Traces execution paths and maps architecture for a feature area |
-| `code-reviewer` | Reviews code for bugs, security issues, and convention adherence |
-| `explorer` | Cheap (haiku) file discovery, symbol search, and repo-structure lookups |
-| `implementer` | Sonnet-tier agent for running tests, reading failures, and applying fixes |
+## Install
 
-## commands/
+Everything is plain files. Back up your own `~/.claude` first.
 
-| Command | Purpose |
-|---|---|
-| `feature-dev` | Guided feature development with codebase understanding and architecture focus |
+1. Copy what you want: `skills/*` to `~/.claude/skills/`, `agents/*.md` to `~/.claude/agents/`, `hooks/*` to `~/.claude/hooks/`, `scripts/*` to `~/.claude/scripts/`.
+2. Merge `examples/settings.example.json` into `~/.claude/settings.json` (do not overwrite yours). Replace `<HOME>` with your home folder, for example `C:/Users/you`. The hooks need Node.js.
+3. Optional: adapt `examples/CLAUDE.global.example.md` into your `~/.claude/CLAUDE.md`. It is my own policy (for example the git rules), so read it before copying.
+4. Check the cost: `node ~/.claude/scripts/context-audit.mjs`, then `node ~/.claude/scripts/config-audit.mjs`.
 
-## Usage
+Things to know before copying:
+- **Windows only:** the settings example calls `skill-install-gate.ps1` through PowerShell. On macOS or Linux remove those two hook entries or port the gate, otherwise every Bash call errors.
+- **Copy `scripts/` together with `hooks/`:** `hooks/plugin-hook.mjs` imports `scripts/plugin-toggle.mjs`.
+- `plugin-hook.mjs` (the `TRIGGERS` list) and `plugin-toggle.mjs` (the `GROUPS` list) contain the plugin names I toggle; edit both to match yours.
+- The example does not set `CLAUDE_CODE_SUBAGENT_MODEL`: the agent files already pin their own model.
 
-Drop any of these into `~/.claude/skills/`, `~/.claude/agents/`, or `~/.claude/commands/` (or a project's `.claude/` equivalent) to enable them in Claude Code.
+## License
 
-## External plugins (not mirrored here)
+The files in this repository are MIT licensed (see `LICENSE`). Third-party skills linked from `THIRD_PARTY.md` keep their own licenses.
 
-Installed via Claude Code's plugin marketplaces rather than authored locally, so they aren't copied into this repo — install them directly instead:
+## Security notes
 
-| Plugin | Source |
-|---|---|
-| `frontend-design` | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) |
-| `superdesign` | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) |
-| `feature-dev` | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) |
-| `security-guidance` | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) |
-| `superpowers` | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) |
-| `semgrep` | [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) |
-| `engineering-skills` | [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) |
-| `engineering-advanced-skills` | [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) |
-| `ui-ux-pro-max` | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) |
-| `brag` | [latent-spaces/brag](https://github.com/latent-spaces/brag) |
-| `ponytail` | [DietrichGebert/ponytail](https://github.com/DietrichGebert/ponytail) |
-| `headroom` | [headroomlabs-ai/headroom](https://github.com/headroomlabs-ai/headroom) |
+- Read every hook before enabling it: hooks run code on your machine. These ones use no network and no `eval`; `config-audit.mjs` checks your folder for both.
+- A hook cannot load a plugin into a running session. `plugin-hook.mjs` only edits `settings.json`; you still run `/reload-plugins`.
+- `skill-install-gate.ps1` matches command text. It can block a harmless command that merely mentions installing a plugin, and it fails open when it cannot parse its input or when the install command is not covered by its pattern. It is a seat belt, not a guarantee.
+- The routes are a hypothesis built from published evidence and have not been proven on a benchmark. Treat them as a starting point.
+
+## Maintenance
+
+`scripts/sync-readme.mjs` mirrors only the skills authored here, refreshes the table above, refuses to commit if it finds secrets or personal data, and never pushes.

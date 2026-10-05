@@ -2,7 +2,7 @@
 // Fires from a Claude Code PostToolUse(Write) hook whenever a SKILL.md is written.
 // Mirrors ~/.claude/skills/ into this repo's skills/, regenerates the README table,
 // and commits locally if anything changed (push is manual).
-import { readdirSync, statSync, readFileSync, writeFileSync, cpSync, rmSync, existsSync } from "node:fs";
+import { readdirSync, statSync, readFileSync, writeFileSync, cpSync, rmSync, existsSync, realpathSync } from "node:fs";
 import { join } from "node:path";
 import { execSync } from "node:child_process";
 import os from "node:os";
@@ -31,7 +31,9 @@ function skillDirs(root) {
 }
 
 // mirror SRC -> DEST (add/update/remove)
-const srcDirs = new Set(skillDirs(SRC));
+// Public repo: mirror ONLY skills authored here. Third-party skills are linked from THIRD_PARTY.md, never copied.
+const OWN = new Set(["big-task-workflow", "feature-assessment", "repo-howto", "project-map"]);
+const srcDirs = new Set(skillDirs(SRC).filter((n) => OWN.has(n)));
 if (existsSync(DEST)) {
   for (const name of skillDirs(DEST)) {
     if (!srcDirs.has(name)) rmSync(join(DEST, name), { recursive: true, force: true });
@@ -39,7 +41,8 @@ if (existsSync(DEST)) {
 }
 for (const name of srcDirs) {
   // skills installed with `npx skills add` are symlinks into ~/.agents/skills; copy their contents, not the link
-  cpSync(join(SRC, name), join(DEST, name), { recursive: true, force: true, dereference: true });
+  // resolve the link first: cpSync cannot overwrite an existing dir with a symlink source on Node 24
+  cpSync(realpathSync(join(SRC, name)), join(DEST, name), { recursive: true, force: true, dereference: true });
 }
 
 function frontmatter(skillMdPath) {
@@ -81,8 +84,7 @@ const updated = readme.replace(
   /<!-- SKILLS_TABLE_START -->[\s\S]*?<!-- SKILLS_TABLE_END -->/,
   `<!-- SKILLS_TABLE_START -->\n${table}\n<!-- SKILLS_TABLE_END -->`
 );
-if (updated === readme) process.exit(0); // marker missing or no textual change to README itself
-writeFileSync(readmePath, updated);
+if (updated !== readme) writeFileSync(readmePath, updated); // the table may be unchanged while skill files changed
 
 const sh = (cmd) => execSync(cmd, { cwd: REPO, stdio: "pipe" }).toString();
 
