@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320">
+  <rect width="1280" height="320" rx="16" fill="#141413"/>
+  <text x="80" y="150" font-family="ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace" font-size="72" font-weight="700" fill="#f2efe8">claude<tspan fill="#f97316">-</tspan>skills</text>
+  <text x="82" y="210" font-family="ui-sans-serif, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="28" fill="#a39e93">Fewer tokens, better results: an opinionated Claude Code setup.</text>
+  <text x="82" y="262" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="20" fill="#f97316">R0 · R1 · R2 · R3 · R4</text>
+</svg>

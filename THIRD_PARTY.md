@@ -13,6 +13,7 @@ Not copied into this repository. Each belongs to its author: follow the link, re
 | `hyperframes*`, `media-use` | https://github.com/heygen-com/hyperframes | see the repository |
 | `game-feel`, `game-ui-ux`, `level-design`, `audio-design`, `game-ai` | https://github.com/gamedev-skills/awesome-gamedev-agent-skills | see the repository |
 | `game-developer` | https://github.com/jeffallan/claude-skills | see the repository |
+| `apple-design`, `emil-design-eng`, `animate`, `animate-expo`, `animation-performance`, `animation-vocabulary`, `review-animations`, `improve-animations`, `find-animation-opportunities`, `break-ui`, `mobile-native`, `ask-sonner`, `prototype`, `pick-ui-library`, `write-swift` | https://github.com/emilkowalski/skill | MIT (verified) |
 | `frontend-design` | the official `claude-plugins-official` plugin marketplace | see the plugin |
 
 ## Plugins and tools
