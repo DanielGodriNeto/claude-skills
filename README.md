@@ -17,10 +17,10 @@ The core idea: do not run the same heavy process on every task. A single writer 
 <!-- SKILLS_TABLE_START -->
 | Skill | Purpose |
 |---|---|
-| `big-task-workflow` | Routes R0-R4: effort scaled by task type and risk, from a direct fix to a full plan/critic/review cycle |
-| `feature-assessment` | Honest feasibility and risk verdict with percentages before building something non-trivial |
-| `repo-howto` | Find and evaluate GitHub repositories that solve a problem, with a token check first |
-| `project-map` | Turn a project into a navigable map (graphify and an Obsidian vault) with a public-safe variant |
+| `big-task-workflow` | Use whenever the user asks to build or improve something (site, app, feature, integration, refactor, restructuring) or to investigate a complex system (e.g. ... |
+| `feature-assessment` | Use BEFORE building or changing something non-trivial (routes R2-R4 of big-task-workflow, or when the user asks for a verdict); in route R1 give only a one-l... |
+| `project-map` | Use when the user asks to explain, understand, map, or get an overview of a project or codebase ("explain this project", "how does this repo work", "map the ... |
+| `repo-howto` | Use when the user wants to know how EXTERNAL open-source projects do something, or says "find GitHub repos that do X", "has someone built this", or pastes a ... |
 <!-- SKILLS_TABLE_END -->
 
 Skills written by other people are **not copied here**. They are listed with links in [THIRD_PARTY.md](THIRD_PARTY.md).
