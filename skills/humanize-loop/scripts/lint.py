@@ -128,6 +128,7 @@ def selftest():
 
 
 def main():
+    sys.stdout.reconfigure(encoding="utf-8")
     if sys.argv[1:] == ["--selftest"]:
         return selftest()
     if len(sys.argv) != 2:
