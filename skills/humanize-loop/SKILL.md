@@ -17,7 +17,7 @@ Ask the user, defaulting to **local only** if they do not answer:
 ## Inputs
 
 - The text (file or pasted). Prose only: drop code, tables, captions and headings before checking.
-- Target: lint shows no flags, and the rubric finds nothing. Online target: **10%** on ZeroGPT (0 lint flags has given 0% so far). "Zero" is not a sane target; say so if asked.
+- Target: lint shows no flags, and the rubric finds nothing. Online target: **10%** on ZeroGPT. "Zero" is not a sane target; say so if asked.
 - Language: any. The lint's rhythm checks work in every script (Chinese, Japanese and Thai are counted per character); its stock-phrase list covers pt, en, es, fr, de, it, zh and ja. For other languages, spot stock phrases with the rubric, which you apply in the text's own language. Thresholds were only validated on pt-BR: say so in the report for other languages.
 
 ## Steps
@@ -46,9 +46,9 @@ python scripts/lint.py <file.txt>
 python scripts/lint.py --selftest
 ```
 
-It flags uniform sentence length, long average sentences (over 20 words: formal register), repeated two-word sentence openers, stock phrases (8 languages), em-dash overuse and uniform paragraphs, and lists the sentences to rewrite.
+It flags uniform sentence length, long average sentences (over 20 words: formal register), repeated two-word sentence openers, stock phrases (8 languages), em-dash overuse and uniform paragraphs, and lists the sentences to rewrite. Texts over ~450 words are also linted per section of ~300 words, so one AI-sounding section is not averaged away ("section k/n" flags). Paragraphs split by single newlines (pasted from Word or PDF) are detected too.
 
-Calibration (2026-10-14, pt-BR, 34 texts of ~250-370 words: raw Claude/Qwen, ENEM essays, Wikipedia, humanized): every text with 0 flags scored **0% on ZeroGPT**, including 2 held-out texts not used for tuning. Texts with any flag ranged 0-100%. So 0 flags is a strong predictor, not a guarantee: other languages, other lengths or a ZeroGPT model update can break it. Repeated template labels the user must keep (e.g. "Uso no dia a dia:") trip the opener flag: ignore that flag for them.
+Calibration vs ZeroGPT (2026-10-14). Tuning set, 32 pt-BR texts: every 0-flag text scored 0%. Held-out set, 15 texts rewritten to 0 flags: pt-BR short (9): 8 at 0%, 1 academic text at 27%; es (1): 0%; pt-BR 1000-word paper: 14.5%; **en (3): 64-83%**. So: 0 flags predicts a low score for short pt/es prose, is weaker for academic register and long documents, and **does not work for English** (ZeroGPT relies on signals a style lint cannot see). For English, or when the score matters, run the rubric strictly and the online check if allowed.
 
 **Rubric (Claude reads the text):** based on Wikipedia's "Signs of AI writing". Point to concrete sentences, never invent a percentage:
 - rule-of-three lists and paired "not only X but also Y" constructions everywhere

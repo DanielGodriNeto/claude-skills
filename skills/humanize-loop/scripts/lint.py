@@ -60,6 +60,7 @@ OPENER_FLAG = 0.15     # one two-word opener starting >15% of sentences
 STOCK_PER_1K_FLAG = 6  # stock-phrase hits per 1000 words
 DASH_PER_1K_FLAG = 3   # em dashes per 1000 words
 PARA_CV_FLAG = 0.25    # paragraph-length CV below this reads uniform
+WINDOW_WORDS = 300     # long texts are also linted per section of about this size
 SENT_MEAN_FLAG = 20    # mean words per sentence above this reads formal; ZeroGPT scored every such pt text >10% AI
 
 
@@ -70,6 +71,28 @@ def sentences(text):
 
 def words(text):
     return re.findall(CONTINUA + r"|(?:(?!" + CONTINUA + r")[\w'-])+", text.lower())
+
+
+def paragraphs(text):
+    blocks = [b for b in re.split(r"\n\s*\n", text) if b.strip()]
+    if len(blocks) < 2:  # pasted from Word/PDF: paragraphs split by single newlines
+        blocks = [b for b in text.split("\n") if b.strip()]
+    return blocks
+
+
+def sections(text):
+    """Group paragraphs into chunks of >= WINDOW_WORDS; a short tail joins the previous chunk."""
+    out, cur = [], []
+    for para in paragraphs(text):
+        cur.append(para)
+        if len(words("\n".join(cur))) >= WINDOW_WORDS:
+            out.append(cur)
+            cur = []
+    if cur and out and len(words("\n".join(cur))) < WINDOW_WORDS / 2:
+        out[-1] += cur
+    elif cur:
+        out.append(cur)
+    return ["\n\n".join(c) for c in out]
 
 
 def cv(values):
@@ -93,7 +116,7 @@ def analyze(text):
     sents = sentences(text)
     lens = [len(words(s)) for s in sents]
     total = len(words(text)) or 1
-    paras = [p for p in re.split(r"\n\s*\n", text) if len(words(p)) >= 15]
+    paras = [p for p in paragraphs(text) if len(words(p)) >= 15]
     openers = Counter(" ".join(words(s)[:2]) for s in sents)
     top_opener, top_n = openers.most_common(1)[0] if openers else ("", 0)
     hits = stock_hits(text)
@@ -130,12 +153,30 @@ def flags(r):
     return out
 
 
-def report(r):
+def section_flags(text):
+    """Flags per section, so one AI-sounding section of a long document is not averaged away."""
+    secs = sections(text)
+    if len(secs) < 2:
+        return []
+    return [
+        f"section {i}/{len(secs)} ('{sec[:40].strip()}...'): {f}"
+        for i, sec in enumerate(secs, 1)
+        for f in flags(analyze(sec))
+    ]
+
+
+def all_flags(text):
+    return flags(analyze(text)) + section_flags(text)
+
+
+def report(text):
+    r = analyze(text)
+    found = all_flags(text)
     lines = [
         f"words {r['words']} | sentences {r['sentences']} | mean sentence {r['sent_mean']:.1f} words"
         f" | sentence CV {r['sent_cv']:.2f}",
-        f"FLAGS ({len(flags(r))}):",
-        *([f"  - {f}" for f in flags(r)] or ["  none"]),
+        f"FLAGS ({len(found)}):",
+        *([f"  - {f}" for f in found] or ["  none"]),
         "stock phrases: " + (", ".join(f"{p} x{n}" for p, n in r["stock"].most_common()) or "none"),
         "sentences to rewrite:",
         *([f"  > {s}" for s in r["flagged"]] or ["  none"]),
@@ -164,6 +205,12 @@ def selftest():
     zh = "此外，系统很稳定。此外，数据很完整。此外，模型很高效。总之，这个项目至关重要。"
     z = analyze(zh)
     assert z["sentences"] == 4 and z["stock"]["此外"] == 3, z
+    assert len(paragraphs("Primeira linha.\nSegunda linha.\nTerceira linha.")) == 3
+    doc = "\n\n".join([human] * 6 + [ai] * 8)  # clean section, then an AI-sounding one
+    assert len(sections(doc)) == 2, len(sections(doc))
+    assert any(f.startswith("section 2/2") for f in section_flags(doc)), section_flags(doc)
+    assert not any(f.startswith("section 1/2") and "stock" in f for f in section_flags(doc))
+    assert section_flags(human) == []
     print("selftest ok")
 
 
@@ -174,7 +221,7 @@ def main():
     if len(sys.argv) != 2:
         sys.exit(__doc__)
     with open(sys.argv[1], encoding="utf-8") as f:
-        print(report(analyze(f.read())))
+        print(report(f.read()))
 
 
 if __name__ == "__main__":
