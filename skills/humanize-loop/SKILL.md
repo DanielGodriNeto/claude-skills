@@ -17,7 +17,7 @@ Ask the user, defaulting to **local only** if they do not answer:
 ## Inputs
 
 - The text (file or pasted). Prose only: drop code, tables, captions and headings before checking.
-- Target: lint shows no flags, and the rubric finds nothing. Online target: **30%** on ZeroGPT. "Zero" is not a sane target; say so if asked.
+- Target: lint shows no flags, and the rubric finds nothing. Online target: **10%** on ZeroGPT (0 lint flags has given 0% so far). "Zero" is not a sane target; say so if asked.
 - Language: any. The lint's rhythm checks work in every script (Chinese, Japanese and Thai are counted per character); its stock-phrase list covers pt, en, es, fr, de, it, zh and ja. For other languages, spot stock phrases with the rubric, which you apply in the text's own language. Thresholds were only validated on pt-BR: say so in the report for other languages.
 
 ## Steps
@@ -46,7 +46,9 @@ python scripts/lint.py <file.txt>
 python scripts/lint.py --selftest
 ```
 
-It flags uniform sentence length, repeated two-word sentence openers, stock phrases (8 languages), em-dash overuse and uniform paragraphs, and lists the sentences to rewrite. Repeated template labels the user must keep (e.g. "Uso no dia a dia:") trip the opener flag: ignore that flag for them.
+It flags uniform sentence length, long average sentences (over 20 words: formal register), repeated two-word sentence openers, stock phrases (8 languages), em-dash overuse and uniform paragraphs, and lists the sentences to rewrite.
+
+Calibration (2026-10-14, pt-BR, 34 texts of ~250-370 words: raw Claude/Qwen, ENEM essays, Wikipedia, humanized): every text with 0 flags scored **0% on ZeroGPT**, including 2 held-out texts not used for tuning. Texts with any flag ranged 0-100%. So 0 flags is a strong predictor, not a guarantee: other languages, other lengths or a ZeroGPT model update can break it. Repeated template labels the user must keep (e.g. "Uso no dia a dia:") trip the opener flag: ignore that flag for them.
 
 **Rubric (Claude reads the text):** based on Wikipedia's "Signs of AI writing". Point to concrete sentences, never invent a percentage:
 - rule-of-three lists and paired "not only X but also Y" constructions everywhere

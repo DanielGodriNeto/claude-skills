@@ -60,6 +60,7 @@ OPENER_FLAG = 0.15     # one two-word opener starting >15% of sentences
 STOCK_PER_1K_FLAG = 6  # stock-phrase hits per 1000 words
 DASH_PER_1K_FLAG = 3   # em dashes per 1000 words
 PARA_CV_FLAG = 0.25    # paragraph-length CV below this reads uniform
+SENT_MEAN_FLAG = 20    # mean words per sentence above this reads formal; ZeroGPT scored every such pt text >10% AI
 
 
 def sentences(text):
@@ -101,6 +102,7 @@ def analyze(text):
         "sentences": len(sents),
         "sent_mean": statistics.mean(lens) if lens else 0.0,
         "sent_cv": cv(lens),
+        "cjk_share": sum(1 for w in words(text) if re.fullmatch(CONTINUA, w)) / total,
         "para_cv": cv([len(words(p)) for p in paras]) if len(paras) >= 3 else None,
         "top_opener": top_opener,
         "top_opener_share": top_n / len(sents) if sents else 0.0,
@@ -121,6 +123,8 @@ def flags(r):
         out.append(f"stock phrases {r['stock_per_1k']:.1f}/1k words (> {STOCK_PER_1K_FLAG})")
     if r["dash_per_1k"] > DASH_PER_1K_FLAG:
         out.append(f"em dashes {r['dash_per_1k']:.1f}/1k words (> {DASH_PER_1K_FLAG})")
+    if r["sentences"] >= 5 and r["cjk_share"] < 0.5 and r["sent_mean"] > SENT_MEAN_FLAG:
+        out.append(f"long sentences (mean {r['sent_mean']:.1f} words > {SENT_MEAN_FLAG}): split some, formal register reads as AI")
     if r["para_cv"] is not None and r["para_cv"] < PARA_CV_FLAG:
         out.append(f"uniform paragraph length (CV {r['para_cv']:.2f} < {PARA_CV_FLAG})")
     return out
@@ -151,6 +155,8 @@ def selftest():
     assert flags(h) == [], flags(h)
     assert a["stock"]["além disso"] == 7
     assert analyze("")["sentences"] == 0
+    long_s = " ".join(["O sistema foi desenvolvido para atender " + "às demandas da área " * 4 + f"no ano {i}." for i in range(6)])
+    assert any("long sentences" in f for f in flags(analyze(long_s))), flags(analyze(long_s))
     es = ("Además, el sistema es robusto. Además, la base es integral. Además, el modelo es eficiente. "
           "Además, la consulta es rápida. Además, el índice es clave. Además, cabe destacar el costo. "
           "Además, el proyecto es crucial.")
