@@ -32,7 +32,7 @@ function skillDirs(root) {
 
 // mirror SRC -> DEST (add/update/remove)
 // Public repo: mirror ONLY skills authored here. Third-party skills are linked from THIRD_PARTY.md, never copied.
-const OWN = new Set(["big-task-workflow", "feature-assessment", "repo-howto", "project-map", "readme-design"]);
+const OWN = new Set(["big-task-workflow", "feature-assessment", "repo-howto", "project-map", "readme-design", "humanize-loop"]);
 const srcDirs = new Set(skillDirs(SRC).filter((n) => OWN.has(n)));
 if (existsSync(DEST)) {
   for (const name of skillDirs(DEST)) {
