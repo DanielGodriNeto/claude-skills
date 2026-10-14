@@ -18,7 +18,7 @@ The Claude Code configuration I actually use, with personal paths removed. It is
 
 - **Task routing (R0–R4).** A hook reads each build or improve prompt and reminds the model to pick a route sized to the task and its risk, from a direct fix up to a full plan/critic/review cycle.
 - **A UI design council.** On site, app or interface prompts, the same hook asks the model to have your design skills each propose and critique once before any UI code is written, then merge the best ideas.
-- **Five skills of my own**, including `readme-design`, which wrote this README.
+- **Six skills of my own**, including `readme-design`, which wrote this README.
 - **Six pinned subagents** (`explorer`, `researcher`, `implementer`, `planner`, `critic`, `reviewer`) with fixed model and effort, replying in a short fixed template to save tokens.
 - **Safety rails.** A gate that blocks installing skills or plugins until they were scanned, and a sync script that refuses to commit secrets or personal data.
 - **Zero-token audits.** Scripts that measure your always-loaded context cost and lint your `.claude` folder offline.

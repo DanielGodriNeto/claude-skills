@@ -28,7 +28,7 @@ Not copied into this repository. Each belongs to its author: follow the link, re
 
 ## Not listed
 
-`graphify`, `humanizer`, `omarchy`, `diagnose-crash` and `superdesign` are in my setup but I have no verified source link for them, so I do not link them here.
+`graphify`, `humanizer` (required by `humanize-loop`), `omarchy`, `diagnose-crash` and `superdesign` are in my setup but I have no verified source link for them, so I do not link them here.
 
 ## History note
 
