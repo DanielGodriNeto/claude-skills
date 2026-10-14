@@ -1,4 +1,4 @@
-"""Stdlib-only style lint for AI-sounding prose (pt/en). Nothing leaves the machine.
+"""Stdlib-only style lint for AI-sounding prose, any language. Nothing leaves the machine.
 
 Usage: python lint.py <file.txt>      prints a report
        python lint.py --selftest       runs the built-in check
@@ -6,6 +6,10 @@ Usage: python lint.py <file.txt>      prints a report
 Signals, not proof: each one is a pattern detectors and style guides associate
 with LLM text (low sentence-length variance, stock phrases, repeated openers,
 uniform paragraphs, em dashes). Use the flagged lines as rewrite targets.
+
+Rhythm signals work in any script. Languages written without spaces (Chinese,
+Japanese, Thai) are counted per character. Stock phrases cover pt, en, es, fr,
+de, it, zh and ja; for other languages leave phrase spotting to the rubric.
 """
 import re
 import statistics
@@ -26,23 +30,45 @@ STOCK = [
     "plays a crucial role", "plays a vital role", "in today's", "ever-evolving", "landscape", "tapestry",
     "seamless", "robust", "leverage", "comprehensive", "in conclusion", "ultimately", "not only",
     "underscore", "pivotal", "foster", "intricate", "navigate the",
+    # es
+    "además", "cabe destacar", "es importante destacar", "es fundamental", "es crucial",
+    "desempeña un papel", "papel fundamental", "en la actualidad", "en resumen", "en conclusión",
+    "de esta manera", "en este sentido", "no solo", "sino también", "amplia gama", "robusto", "integral",
+    # fr
+    "de plus", "en outre", "il est important de noter", "il convient de souligner", "joue un rôle",
+    "rôle crucial", "rôle essentiel", "à l'ère", "en conclusion", "en résumé", "non seulement",
+    "mais aussi", "dans ce contexte", "un large éventail", "robuste", "approfondir",
+    # de
+    "darüber hinaus", "zudem", "es ist wichtig zu beachten", "spielt eine entscheidende rolle",
+    "eine wichtige rolle", "in der heutigen", "zusammenfassend", "abschließend", "nicht nur",
+    "sondern auch", "in diesem zusammenhang", "ganzheitlich", "nahtlos", "robust",
+    # it
+    "inoltre", "è importante sottolineare", "vale la pena notare", "svolge un ruolo", "ruolo cruciale",
+    "ruolo fondamentale", "al giorno d'oggi", "in conclusione", "in sintesi", "non solo", "ma anche",
+    "in questo contesto", "un'ampia gamma", "robusto",
+    # zh
+    "此外", "值得注意的是", "总之", "总而言之", "综上所述", "至关重要", "发挥着重要作用", "不仅", "而且",
+    "在当今", "日益", "全方位",
+    # ja
+    "さらに", "重要なのは", "注目すべきは", "結論として", "まとめると", "重要な役割を果たす", "だけでなく",
+    "現代において", "包括的",
 ]
+CONTINUA = r"[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff\u0e00-\u0e7f]"  # kana, CJK, Thai: one char = one unit
 
 CV_FLAG = 0.35         # sentence-length coefficient of variation below this reads uniform
-OPENER_FLAG = 0.15     # one opener word starting >15% of sentences
+OPENER_FLAG = 0.15     # one two-word opener starting >15% of sentences
 STOCK_PER_1K_FLAG = 6  # stock-phrase hits per 1000 words
 DASH_PER_1K_FLAG = 3   # em dashes per 1000 words
 PARA_CV_FLAG = 0.25    # paragraph-length CV below this reads uniform
-ARTICLES = {"a", "o", "as", "os", "um", "uma", "the", "an"}  # too common to count as a repeated opener
 
 
 def sentences(text):
-    parts = re.split(r"(?<=[.!?…])\s+", re.sub(r"\s+", " ", text).strip())
+    parts = re.split(r"(?<=[.!?…])\s+|(?<=[。！？؟।])\s*", re.sub(r"\s+", " ", text).strip())
     return [s for s in parts if len(words(s)) >= 3]
 
 
 def words(text):
-    return re.findall(r"[\wÀ-ÿ'-]+", text.lower())
+    return re.findall(CONTINUA + r"|(?:(?!" + CONTINUA + r")[\w'-])+", text.lower())
 
 
 def cv(values):
@@ -55,7 +81,8 @@ def stock_hits(text):
     low = text.lower()
     hits = Counter()
     for phrase in STOCK:
-        n = len(re.findall(r"(?<![\wÀ-ÿ])" + re.escape(phrase) + r"(?![\wÀ-ÿ])", low))
+        pattern = re.escape(phrase) if re.search(CONTINUA, phrase) else r"(?<!\w)" + re.escape(phrase) + r"(?!\w)"
+        n = len(re.findall(pattern, low))
         if n:
             hits[phrase] = n
     return hits
@@ -66,7 +93,7 @@ def analyze(text):
     lens = [len(words(s)) for s in sents]
     total = len(words(text)) or 1
     paras = [p for p in re.split(r"\n\s*\n", text) if len(words(p)) >= 15]
-    openers = Counter(words(s)[0] for s in sents if words(s) and words(s)[0] not in ARTICLES)
+    openers = Counter(" ".join(words(s)[:2]) for s in sents)
     top_opener, top_n = openers.most_common(1)[0] if openers else ("", 0)
     hits = stock_hits(text)
     return {
@@ -124,6 +151,13 @@ def selftest():
     assert flags(h) == [], flags(h)
     assert a["stock"]["além disso"] == 7
     assert analyze("")["sentences"] == 0
+    es = ("Además, el sistema es robusto. Además, la base es integral. Además, el modelo es eficiente. "
+          "Además, la consulta es rápida. Además, el índice es clave. Además, cabe destacar el costo. "
+          "Además, el proyecto es crucial.")
+    assert len(flags(analyze(es))) >= 2, flags(analyze(es))
+    zh = "此外，系统很稳定。此外，数据很完整。此外，模型很高效。总之，这个项目至关重要。"
+    z = analyze(zh)
+    assert z["sentences"] == 4 and z["stock"]["此外"] == 3, z
     print("selftest ok")
 
 

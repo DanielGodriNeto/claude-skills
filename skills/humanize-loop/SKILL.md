@@ -18,7 +18,7 @@ Ask the user, defaulting to **local only** if they do not answer:
 
 - The text (file or pasted). Prose only: drop code, tables, captions and headings before checking.
 - Target: lint shows no flags, and the rubric finds nothing. Online target: **30%** on ZeroGPT. "Zero" is not a sane target; say so if asked.
-- Language (pt-BR and en are supported by the lint; other languages: rubric only).
+- Language: any. The lint's rhythm checks work in every script (Chinese, Japanese and Thai are counted per character); its stock-phrase list covers pt, en, es, fr, de, it, zh and ja. For other languages, spot stock phrases with the rubric, which you apply in the text's own language. Thresholds were only validated on pt-BR: say so in the report for other languages.
 
 ## Steps
 
@@ -46,7 +46,7 @@ python scripts/lint.py <file.txt>
 python scripts/lint.py --selftest
 ```
 
-It flags uniform sentence length, repeated sentence openers, stock phrases (pt/en), em-dash overuse and uniform paragraphs, and lists the sentences to rewrite. Repeated template labels the user must keep (e.g. "Uso no dia a dia:") trip the opener flag: ignore that flag for them.
+It flags uniform sentence length, repeated two-word sentence openers, stock phrases (8 languages), em-dash overuse and uniform paragraphs, and lists the sentences to rewrite. Repeated template labels the user must keep (e.g. "Uso no dia a dia:") trip the opener flag: ignore that flag for them.
 
 **Rubric (Claude reads the text):** based on Wikipedia's "Signs of AI writing". Point to concrete sentences, never invent a percentage:
 - rule-of-three lists and paired "not only X but also Y" constructions everywhere
