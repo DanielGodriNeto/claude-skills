@@ -1,6 +1,6 @@
 ---
 name: humanize-loop
-description: Use when the user wants prose to read less like AI output and wants it measured, e.g. "humanize and test this", "run it through AI detectors", "get the AI score below X%". Runs the humanizer skill, checks the text locally (stdlib style lint + a writing rubric, optional experimental Binoculars score), rewrites only flagged passages and repeats (max 3 rounds). Online detectors (ZeroGPT) only as a final check, only if the user opts in and the document is not sensitive. Not for code, and never changes facts.
+description: Use when the user wants prose to read less like AI output and wants it measured, e.g. "humanize and test this", "run it through AI detectors", "get the AI score below X%". Runs the humanizer skill, checks the text locally (stdlib style lint + a writing rubric, optional local predictability score), rewrites only flagged passages and repeats (max 3 rounds). Online detectors (ZeroGPT) only as a final check, only if the user opts in and the document is not sensitive. Not for code, and never changes facts.
 ---
 
 # humanize-loop
@@ -32,7 +32,7 @@ Ask the user, defaulting to **local only** if they do not answer:
    - Max **3 rounds** after the baseline.
 6. **Keep the best round** (fewest lint flags, then fewest rubric hits), not the latest. A worse round is discarded.
 7. **Optional checks.**
-   - *Expanded (experimental):* Binoculars score, only if the user asks for it. See the warning below.
+   - *Predictability (local, recommended for pt-BR when the score matters):* `predict.py`. If it says "likely flagged", rewrite the paragraphs it names with less expected word choices and concrete detail, then re-check (counts as a round).
    - *Online final:* only in "local + online" mode. One ZeroGPT run on the best anonymized version. If it is above target, at most one more round on the sentences it highlights.
 8. **Meaning check.** Diff the best version against the original: every fact, number and requirement must still be there. If a round changed meaning, discard it.
 9. **Restore** the placeholders and write the final text where the user needs it.
@@ -58,9 +58,16 @@ Calibration vs ZeroGPT (2026-10-14). Tuning set, 32 pt-BR texts: every 0-flag te
 - hedged, sourceless authority ("especialistas apontam", "studies show")
 - no concrete detail where a human would have one (a number, a name of a tool, a step that went wrong)
 
-**Binoculars (experimental, off by default):** `scripts/binoculars.py`, Hans et al. 2024, with Qwen3-0.6B-Base/Qwen3-0.6B. Needs `torch` (CPU) and `transformers`, plus a ~2.4 GB model download on first run; the text stays local.
+**Predictability (local, optional):** `scripts/predict.py`. Mean token log-prob under Qwen3-0.6B-Base: how easy the text is for a small model to guess. ZeroGPT leans on this and the lint cannot see it. Needs `torch` (CPU) and `transformers`, ~1.2 GB download on first run; the text stays local.
 
-> **Warning, measured 2026-10-14 on pt-BR samples:** it scored Qwen-written text as machine-like (0.88) but scored a Claude-style AI text (1.07) **inside the human range** (1.00 to 1.06 on Wikipedia text). The 1.7B pair was worse (1.11). It does not catch Claude output: a "human-like" result proves nothing. Use it only to compare rounds of the same text, never as a pass/fail.
+```
+python scripts/predict.py <file.txt>
+python scripts/predict.py --selftest
+```
+
+Measured 2026-10-14 against ZeroGPT > 10%: **pt-BR AUC 0.99** (45 texts). It caught both 0-flag texts the lint missed (the academic one and the long paper, naming the intro paragraph ZeroGPT highlighted). **English AUC 0.60: useless there**, so for English use it only to compare rounds. Thresholds are in-sample (one corpus), so "ok" is a strong hint, not proof. Binoculars was dropped: AUC 0.50 on the same corpus.
+
+What did **not** work (2026-10-14), so don't repeat it: paraphrasing with another local model (Qwen3-8B) made scores worse (pt 27% to 73%, en 64-83% to 75-92%). Restructuring an English text (new anecdotes and order, not just new sentences) moved it only from 79% to 64%. Human English (Jerome 1889, Paul Graham) scored 0%, so English is not hopeless, but no reliable recipe was found. Also, ZeroGPT itself is noisy: the same text scored 79% and 86% on two runs.
 
 ## Online detector
 
