@@ -25,6 +25,11 @@ STOCK = [
     "de forma eficiente", "de maneira eficaz", "robusto", "abrangente", "otimizar", "potencializar",
     "alavancar", "mergulhar", "explorar a fundo", "uma vez que", "garantindo", "permitindo",
     "não apenas", "mas também", "ampla gama", "diversos aspectos", "como um todo",
+    # pt-BR formal collocations: swapping these alone took a ZeroGPT sample from 82% to 0% (2026-10-15)
+    "processo fundamental", "de maneira mais eficiente", "de forma mais eficiente", "torna-se", "tornam-se",
+    "avaliar cuidadosamente", "equilíbrio ideal", "alinhadas às necessidades", "alinhada às necessidades",
+    "escaláveis", "especialmente importante", "de forma a", "de maneira significativa", "papel essencial",
+    "nesse cenário", "contribui para", "facilita a",
     # en
     "delve", "furthermore", "moreover", "additionally", "it is important to note", "it's worth noting",
     "plays a crucial role", "plays a vital role", "in today's", "ever-evolving", "landscape", "tapestry",

@@ -28,12 +28,12 @@ Ask the user, defaulting to **local only** if they do not answer:
 4. **Check again** with the same local checks.
 5. **Decide.**
    - No lint flags and no rubric hits: go to step 7.
-   - Otherwise rewrite **only the flagged sentences** (vary sentence length, cut stock phrases, prefer concrete verbs, keep the register). Full rewrites tend to score worse.
+   - Otherwise rewrite **only the flagged sentences**, in this order of impact: (1) swap formal stock collocations for plain, everyday words ("desempenha um papel crucial" -> "é o que sustenta", "de maneira mais eficiente" -> "com menos trabalho"); (2) split long sentences, mixing in some short ones. Do **not** join sentences or pad with explanations: both raised ZeroGPT scores. Connectives, first person and paragraphing barely matter. Rewriting with another local model tends to score worse.
    - Max **3 rounds** after the baseline.
 6. **Keep the best round** (fewest lint flags, then fewest rubric hits), not the latest. A worse round is discarded.
 7. **Optional checks.**
    - *Predictability (local, recommended for pt-BR when the score matters):* `predict.py`. If it says "likely flagged", rewrite the paragraphs it names with less expected word choices and concrete detail, then re-check (counts as a round).
-   - *Online final:* only in "local + online" mode. One ZeroGPT run on the best anonymized version. If it is above target, at most one more round on the sentences it highlights.
+   - *Online final:* only in "local + online" mode. One ZeroGPT run on the best anonymized version. If it is above target, at most one more round on the sentences it highlights (the API response lists them in `data.h`). The effect is cumulative with a cliff: partial fixes may only move 82% to 42%, then the rest drops it to 0%, so a round that falls a little is progress, not failure.
 8. **Meaning check.** Diff the best version against the original: every fact, number and requirement must still be there. If a round changed meaning, discard it.
 9. **Restore** the placeholders and write the final text where the user needs it.
 
@@ -56,7 +56,7 @@ Calibration vs ZeroGPT (2026-10-14). Tuning set, 32 pt-BR texts: every 0-flag te
 - vague significance claims ("desempenha um papel crucial", "plays a pivotal role")
 - every paragraph the same shape: topic sentence, two supports, wrap-up
 - hedged, sourceless authority ("especialistas apontam", "studies show")
-- no concrete detail where a human would have one (a number, a name of a tool, a step that went wrong)
+- no concrete detail where a human would have one (a number, a name of a tool, a step that went wrong). This is a reader signal only: adding examples raised ZeroGPT from 82% to 93%, so never add detail just to lower a score
 
 **Predictability (local, optional):** `scripts/predict.py`. Mean token log-prob under Qwen3-0.6B-Base: how easy the text is for a small model to guess. ZeroGPT leans on this and the lint cannot see it. Needs `torch` (CPU) and `transformers`, ~1.2 GB download on first run; the text stays local.
 
@@ -66,6 +66,8 @@ python scripts/predict.py --selftest
 ```
 
 Measured 2026-10-14 against ZeroGPT > 10%: **pt-BR AUC 0.99** (45 texts). It caught both 0-flag texts the lint missed (the academic one and the long paper, naming the intro paragraph ZeroGPT highlighted). **English AUC 0.60: useless there**, so for English use it only to compare rounds. Thresholds are in-sample (one corpus), so "ok" is a strong hint, not proof. Binoculars was dropped: AUC 0.50 on the same corpus.
+
+How ZeroGPT scores (black-box tests, 2026-10-15, pt-BR): the % is the word share of the sentences it highlights; results are repeatable for the same text; flags depend on the whole text, so the same sentence can be flagged in one context and not in another (per-sentence local prediction cannot reproduce them). On one 82% sample: plain-word swaps of 9 formal collocations gave 0%, splitting sentences 44%, joining them 100%, adding examples 93%, removing connectives or switching to first person no change. Validation: 4 AI texts at 89-100% (3 by Claude, 1 by Qwen) all went to 0% in one round of swaps plus splits, facts unchanged. English was not retested.
 
 What did **not** work (2026-10-14), so don't repeat it: paraphrasing with another local model (Qwen3-8B) made scores worse (pt 27% to 73%, en 64-83% to 75-92%). Restructuring an English text (new anecdotes and order, not just new sentences) moved it only from 79% to 64%. Human English (Jerome 1889, Paul Graham) scored 0%, so English is not hopeless, but no reliable recipe was found. Also, ZeroGPT itself is noisy: the same text scored 79% and 86% on two runs.
 
