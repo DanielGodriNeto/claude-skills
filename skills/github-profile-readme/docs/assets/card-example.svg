@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="260" viewBox="0 0 820 260" role="img" aria-label="Profile card: Ada Lovelace, Computer Science, 420 of 1000 contributions">
+  <style>
+    text { font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,'DejaVu Sans Mono',monospace; font-size: 13px; fill: #e8eef2; }
+    .k { fill: #7fb6d4; font-weight: 700; }
+    .dim { fill: #7d8a96; font-size: 12px; }
+    .name { font-size: 20px; font-weight: 700; }
+    .dot { animation: pulse 1.8s ease-in-out infinite; }
+    @keyframes pulse { 50% { opacity: .4; } }
+    @media (prefers-reduced-motion: reduce) { .dot { animation: none; } }
+  </style>
+  <rect x=".5" y=".5" width="819" height="259" rx="8" fill="#0f1419" stroke="#2b3640"/>
+  
+  <text class="name" x="14" y="50">Ada Lovelace</text>
+  <text class="dim" x="14" y="72">Computer Science · github.com/octocat</text>
+  <circle class="dot" cx="346.6" cy="115" r="4" fill="#e0a458"/>
+  <rect x="14" y="112" width="792" height="6" rx="3" fill="#2b3640"/><rect x="14" y="112" width="332.6" height="6" rx="3" fill="#e0a458"/>
+  <text x="14" y="150"><tspan class="k">Contributions</tspan><tspan class="v" x="134">420 of 1,000</tspan></text>
+<text x="14" y="172"><tspan class="k">Public repos</tspan><tspan class="v" x="134">12</tspan></text>
+<text x="14" y="194"><tspan class="k">Since</tspan><tspan class="v" x="134">preview</tspan></text>
+<text x="14" y="216"><tspan class="k">Goal left</tspan><tspan class="v" x="134">580</tspan></text>
+</svg>
