@@ -30,6 +30,7 @@ The Claude Code configuration I actually use, with personal paths removed. It is
 |---|---|
 | `big-task-workflow` | Use whenever the user asks to build or improve something (site, app, feature, integration, refactor, restructuring) or to investigate a complex system (e.g. ... |
 | `feature-assessment` | Use BEFORE building or changing something non-trivial (routes R2-R4 of big-task-workflow, or when the user asks for a verdict); in route R1 give only a one-l... |
+| `github-profile-readme` | Build or revamp a GitHub profile README (the `username/username` repo): audit pins and repos, honest progress card refreshed by a daily Action, light/dark pi... |
 | `humanize-loop` | Use when the user wants prose to read less like AI output and wants it measured, e.g. "humanize and test this", "run it through AI detectors", "get the AI sc... |
 | `project-map` | Use when the user asks to explain, understand, map, or get an overview of a project or codebase ("explain this project", "how does this repo work", "map the ... |
 | `readme-design` | Write or redesign a GitHub README that sells the project in the first screen — hero with logo/banner, real screenshots or GIF demo captured from the running ... |

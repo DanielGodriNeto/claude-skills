@@ -31,6 +31,16 @@ Write one tagline (≤ 12 words, says what it does + for whom, no "blazing fast"
 - Store in `docs/assets/` (or `.github/assets/`), kebab-case names, compress PNGs. Every image gets meaningful `alt` text.
 - Nothing to show visually? Skip images entirely rather than adding stock art.
 
+#### Capture real screenshots of any app
+1. **Look before generating:** images already in the repo (`docs/`, `assets/`), the user's portfolio, a release. `gh api repos/<u>/<r>/contents/<dir>`.
+2. **Web app or hosted demo:** Playwright (Python), `wait_until="load"` (not `networkidle` on apps that poll), viewport 1440x900, wait for data. Free demos sleep: allow 10-30 s. Crop to the useful region.
+3. **Desktop Qt/PySide:** `widget.grab().save(...)` inside the app's own process with `QT_SCALE_FACTOR=2`; compose on a solid background with PIL (translucent corners). **Never capture the whole screen**: it leaks the user's desktop.
+4. **Tk or apps without their own grab:** solid-color topmost backdrop window + `ImageGrab`, then inspect the result; if anything outside the app shows, delete the file.
+5. **Scratch (.sb3):** check the repo for captures first; else TurboWarp embed `https://turbowarp.org/embed.html#<raw .sb3 url>`. If the game does not start by itself, stop and ask the user for a print.
+6. **Thumbnails:** 800x400 (2:1), PNG for UI, JPG q85 for photos, ideally < 100 KB; two modes side by side when the project has two.
+7. **Preference:** real product print > video/GIF frame > typographic banner (last resort, say so).
+8. **Mandatory review:** open every final image with the image reader before committing (personal paths, e-mail, tokens, third-party names).
+
 ### 4. Structure (top to bottom, cut what doesn't apply)
 1. **Hero** — centered logo or banner, name, tagline, a single badge row, quick links (Docs · Demo · Install).
 2. **Visual** — the hero screenshot/GIF, immediately. This is the most important element on the page.

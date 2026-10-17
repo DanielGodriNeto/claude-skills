@@ -1,0 +1,40 @@
+# Copy to .github/workflows/profile.yml in the <user>/<user> repo and the script to .github/scripts/.
+# Adjust --user/--name/--tagline/--goal. Only secret used: the built-in github.token.
+name: Profile assets
+
+on:
+  schedule:
+    - cron: "17 9 * * *"   # off-peak minute, not :00
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: profile-assets
+  cancel-in-progress: false
+
+jobs:
+  card:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Render card
+        run: python .github/scripts/render_card.py card.svg --user <user> --name "<Name>" --tagline "<Role>" --goal 1000
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add card.svg card-light.svg
+          git diff --cached --quiet || git commit -m "chore: update profile card"
+          git pull --rebase -q
+          git push
+
+  # Optional second job. If you add one, it MUST check out main (the card job just pushed):
+  #   - uses: actions/checkout@v4
+  #     with:
+  #       ref: main
+  # Pin any third-party action by full commit SHA, after reading its code, with a comment on version/date.
+  # Example reviewed one: egorthinks/git-bonsai (only talks to api.github.com, pushes the GIF).
